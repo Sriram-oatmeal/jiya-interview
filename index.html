@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jiya's Interview Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one calm column; a quiet top nav; the interview room is a "panel card" above an answer desk. */
+:root{
+  --bg:#F2F5F5; --surface:#FFFFFF; --surface-2:#E9EFEF; --ink:#15242A; --muted:#5B6C72; --line:#D6E0E1;
+  --accent:#1F6B67; --accent-ink:#FFFFFF; --accent-soft:#DCEDEB;
+  --good:#2D7A4E; --warn:#A86A12; --bad:#AE4239; --good-soft:#E1F1E7; --warn-soft:#F7EBD6;
+  --f-display:"Literata", Georgia, "Times New Roman", serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E171A; --surface:#152227; --surface-2:#1B2B30; --ink:#E4EDEE; --muted:#93A5AA; --line:#284045;
+  --accent:#62B9B1; --accent-ink:#082220; --accent-soft:#18383A;
+  --good:#6CC28F; --warn:#E0A84A; --bad:#E07F76; --good-soft:#173328; --warn-soft:#3A2E17; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E171A; --surface:#152227; --surface-2:#1B2B30; --ink:#E4EDEE; --muted:#93A5AA; --line:#284045;
+  --accent:#62B9B1; --accent-ink:#082220; --accent-soft:#18383A;
+  --good:#6CC28F; --warn:#E0A84A; --bad:#E07F76; --good-soft:#173328; --warn-soft:#3A2E17; color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+h1,h2,h3{font-family:var(--f-display);font-weight:500;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15}
+h2{font-size:24px;line-height:1.25}
+h3{font-size:18px;line-height:1.3}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* nav */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-size:18px;display:flex;align-items:center;gap:10px}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:999px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-size:14px;font-weight:500;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+/* generic */
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.btn{border:1px solid var(--line);background:var(--surface);padding:10px 16px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.small{padding:6px 12px;font-size:14px}
+.chip{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:999px;font-size:14px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+section.view{padding-top:28px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+
+/* home */
+.hero{display:grid;gap:10px;padding-block:8px 8px}
+.hero p{max-width:60ch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+.breathe{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+@media (max-width:520px){.breathe{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.orb-box{width:132px;height:132px;display:grid;place-items:center;position:relative}
+.orb{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--accent-soft),var(--accent));transition:transform 4s ease-in-out;}
+.orb-ring{position:absolute;inset:0;border:1.5px dashed var(--line);border-radius:50%}
+.orb-label{position:absolute;bottom:-4px;left:0;right:0;text-align:center;font-size:13px;font-weight:600;color:var(--accent)}
+.optgrid{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:14px;text-align:left;width:100%}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt .radio{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);margin-top:3px}
+.opt[aria-pressed="true"] .radio{border-color:var(--accent);background:radial-gradient(circle,var(--accent) 45%,transparent 50%)}
+.opt b{display:block;font-weight:600}
+.opt span{font-size:14px;color:var(--muted)}
+.switch{display:flex;align-items:center;gap:10px;font-size:15px}
+.switch input{width:18px;height:18px;accent-color:var(--accent)}
+.friend li{margin-bottom:4px}
+.friend ul{margin:8px 0 0;padding-left:20px}
+
+/* room */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:14px}
+.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.who{display:flex;gap:12px;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);font-family:var(--f-display);font-weight:600;position:relative}
+.avatar.speaking::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--accent);animation:pulse 1.2s ease-out infinite}
+@keyframes pulse{from{opacity:.9;transform:scale(.9)}to{opacity:0;transform:scale(1.25)}}
+.question{font-family:var(--f-display);font-size:clamp(20px,3.2vw,26px);line-height:1.4;font-weight:400}
+.ack{font-size:15px;color:var(--muted);font-style:italic}
+.progress{height:4px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
+.desk{display:grid;gap:10px}
+textarea{width:100%;min-height:170px;resize:vertical;font:inherit;font-size:16px;line-height:1.6;padding:14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+.meta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.mic{width:44px;height:44px;border-radius:50%;padding:0;justify-content:center}
+.mic.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.partial{color:var(--muted);font-style:italic;font-size:14px;min-height:1.2em}
+.hintbox{background:var(--warn-soft);border-radius:10px;padding:12px 14px;font-size:15px}
+.thinking{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:15px}
+.dots i{display:inline-block;width:6px;height:6px;margin-right:3px;border-radius:50%;background:var(--accent);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,100%{opacity:.25}50%{opacity:1}}
+.fb{display:grid;gap:14px}
+.score{display:flex;gap:6px;align-items:center}
+.score i{width:22px;height:8px;border-radius:4px;background:var(--surface-2)}
+.score i.on{background:var(--accent)}
+.fb h4{margin:0 0 4px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fb ul{margin:0;padding-left:20px}
+.fb li{margin-bottom:4px}
+.say{border-left:3px solid var(--accent);padding:8px 14px;background:var(--accent-soft);border-radius:0 10px 10px 0;font-family:var(--f-display);font-size:17px}
+.fact{background:var(--warn-soft);padding:10px 14px;border-radius:10px}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600;font-size:15px}
+.trail{display:flex;gap:4px;flex-wrap:wrap}
+.trail span{width:22px;height:6px;border-radius:3px;background:var(--surface-2)}
+.trail span.done{background:var(--accent)}
+.trail span.now{background:var(--warn)}
+
+/* overlay */
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:20;padding:24px}
+.overlay .card{max-width:420px;text-align:center;display:grid;gap:16px;justify-items:center}
+
+/* notes */
+.notes-nav{display:flex;gap:8px;flex-wrap:wrap}
+.note{display:grid;gap:12px}
+.note p,.note li{max-width:70ch}
+.note ul{margin:0;padding-left:20px}
+.note li{margin-bottom:6px}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qa{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface)}
+.qa summary{font-weight:600}
+.qa .ans{margin-top:10px;display:grid;gap:8px}
+.case{display:grid;gap:8px}
+.tag{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.intro{font-family:var(--f-display);font-size:18px;line-height:1.7}
+
+/* report */
+.big{font-family:var(--f-display);font-size:48px;line-height:1}
+.hist-row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2214%22 fill=%22%231F6B67%22/%3E%3C/svg%3E">
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span>Jiya's Interview Room</div>
+    <nav class="tabs" role="tablist">
+      <button id="tab-practice" role="tab" aria-selected="true" data-view="home">Practice</button>
+      <button id="tab-notes" role="tab" aria-selected="false" data-view="notes">Prep notes</button>
+      <button id="tab-history" role="tab" aria-selected="false" data-view="history">History</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- HOME -->
+<section class="view stack" id="view-home">
+  <div class="hero">
+    <p class="eyebrow">VMRF · MClinPsy (RCI) · Personal interview</p>
+    <h1 id="greet">Hi Jiya. You already know this material.</h1>
+    <p class="muted">This panel has read your dissertation, your Shadithya Hospital internship report and your five case histories. It asks what the real panel is likely to ask, then digs one level deeper, the way your friend described today.</p>
+  </div>
+
+  <div class="card breathe">
+    <div class="orb-box"><div class="orb-ring"></div><div class="orb" id="orb"></div><div class="orb-label" id="orbLabel">Ready</div></div>
+    <div class="stack" style="gap:10px">
+      <h3>One minute of box breathing first</h3>
+      <p class="muted">In for 4, hold for 4, out for 4, hold for 4. Four rounds. It slows your heart rate before you start talking.</p>
+      <div class="row"><button class="btn" id="breatheBtn">Start breathing</button></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card stack">
+      <h3>Choose a session</h3>
+      <div class="optgrid" id="sessionOpts">
+        <button class="opt" data-session="full" aria-pressed="true"><span class="radio"></span><div><b>Full mock interview</b><span>11 questions across all areas, about 30 minutes. Starts with "Tell us about yourself".</span></div></button>
+        <button class="opt" data-session="round" aria-pressed="false"><span class="radio"></span><div><b>Practise one area</b><span>Every question from one area, with follow-ups.</span></div></button>
+      </div>
+      <div class="row" id="roundChips" hidden></div>
+    </div>
+    <div class="card stack">
+      <h3>How should the panel behave?</h3>
+      <div class="optgrid" id="modeOpts">
+        <button class="opt" data-mode="coach" aria-pressed="true"><span class="radio"></span><div><b>Coach me after each answer</b><span>Gentle feedback, a better line to say, then the follow-up.</span></div></button>
+        <button class="opt" data-mode="real" aria-pressed="false"><span class="radio"></span><div><b>Real interview</b><span>No feedback until the end. Up to two follow-ups per question.</span></div></button>
+      </div>
+      <label class="switch"><input type="checkbox" id="voiceOn" checked> Read questions aloud</label>
+    </div>
+  </div>
+
+  <div class="row"><button class="btn primary" id="startBtn">Enter the interview room →</button><span class="muted" id="aiStatus" style="font-size:14px">Connecting the AI panel…</span></div>
+
+  <div class="card friend">
+    <p class="eyebrow">What your friend was asked today</p>
+    <ul>
+      <li>About herself: background, why clinical psychology</li>
+      <li>Deep questions about her internship: cases, what she actually did</li>
+      <li>Deep questions about her research: methods, statistics, limitations</li>
+      <li>Other things: general clinical knowledge and program fit</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ROOM -->
+<section class="view stack" id="view-room" hidden>
+  <div class="row" style="justify-content:space-between">
+    <div class="trail" id="trail"></div>
+    <div class="row" style="gap:8px">
+      <button class="btn small ghost" id="pauseBtn">Pause and breathe</button>
+      <button class="btn small ghost" id="endBtn">End and see report</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="who"><div class="avatar" id="avatar">P</div><div><b>Interview panel</b><div class="muted" style="font-size:14px" id="qMeta">Question 1</div></div></div>
+      <button class="btn small ghost" id="replayBtn" title="Read the question again">Hear it again</button>
+    </div>
+    <p class="ack" id="ackLine" hidden></p>
+    <p class="question" id="questionText"></p>
+  </div>
+
+  <div class="desk" id="desk">
+    <textarea id="answer" placeholder="Answer as you would out loud. Type, or tap the mic and speak."></textarea>
+    <p class="partial" id="partial"></p>
+    <div class="row" style="justify-content:space-between">
+      <div class="row" style="gap:8px">
+        <button class="btn mic" id="micBtn" title="Speak your answer" hidden aria-label="Speak your answer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <button class="btn small" id="hintBtn">I'm blanking</button>
+        <button class="btn small ghost" id="skipBtn">Skip</button>
+      </div>
+      <div class="meta"><span id="timer">0:00</span><span id="words">0 words</span></div>
+    </div>
+    <div class="hintbox" id="hintBox" hidden></div>
+    <div class="row"><button class="btn primary" id="submitBtn">Done answering</button></div>
+  </div>
+
+  <div class="thinking" id="thinking" hidden><span class="dots"><i></i><i></i><i></i></span><span id="thinkingText">The panel is considering your answer…</span></div>
+
+  <div class="card fb" id="feedback" hidden></div>
+</section>
+
+<!-- REPORT -->
+<section class="view stack" id="view-report" hidden></section>
+
+<!-- NOTES -->
+<section class="view stack" id="view-notes" hidden></section>
+
+<!-- HISTORY -->
+<section class="view stack" id="view-history" hidden></section>
+
+</main>
+
+<div class="overlay" id="breathOverlay" hidden>
+  <div class="card">
+    <div class="orb-box"><div class="orb-ring"></div><div class="orb" id="orb2"></div><div class="orb-label" id="orbLabel2"></div></div>
+    <p class="muted" id="calmLine">You are allowed to pause. Real panels expect it.</p>
+    <button class="btn primary" id="resumeBtn">I'm ready to continue</button>
+  </div>
+</div>
+
+<script>
+/* ============ CANDIDATE FILE (ground truth for the AI) ============ */
+const PROFILE = `
+CANDIDATE: Najiya Nazeer ("Jiya"). M.Sc. Clinical Psychology (final year, Reg. RA2422028010014), Department of Clinical Psychology, SRM Medical College Hospital & Research Centre, SRM Institute of Science and Technology, Kattankulathur. HOD: Prof. Dr. Bhasi Sukumaran. Applying to the 2-year RCI MClinPsy at Vinayaka Mission's Research Foundation (School of Rehabilitation and Behavioural Sciences, Puducherry campus).
+
+DISSERTATION (April 2026; guide Mrs. Sonal Sunil Mahadik): "Correlational study of body dysmorphic symptoms, perceived social support and suicidal ideation in male and female populations".
+- Design: cross-sectional, correlational; convenience sampling; online (Google Forms) + offline paper. N=251 young adults aged 18-26 (126 F, 125 M). Inclusion: 18-26, reads English, consent. Exclusion: current psychiatric diagnosis under treatment, neurological disorder, severe visual/reading difficulty. IVs: BDD symptoms, perceived social support; DV: suicidal ideation.
+- Sample size: two-group mean comparison, SD male 4.17, female 4.28, mean difference 1.5, alpha 5%, power 80% -> 125 per group, 250 total.
+- Tools: BS-BDD (Body Dysmorphic Symptoms Questionnaire, Jan 2024): 9 items, each 0-8, total 0-72 (checking, perceived unattractiveness, distress, avoidance, preoccupation, intimate relationships, work/study interference, social life, centrality of appearance to self). MSPSS (Zimet et al., 1988): 12 items, 7-point, family/friends/significant other, total 12-84. Beck Scale for Suicidal Ideation (Beck, Kovacs & Weissman 1979): 19 items scored 0-2; any score >=1 indicates ideation.
+- Phase 1 (cultural validation of BS-BDD): Cronbach's alpha = 0.809; alpha-if-item-dropped 0.777 (item 3) to 0.807 (item 1), so all items retained. KMO and Bartlett's test computed (values not printed in thesis). Single-factor CFA: all loadings significant p<.001 (0.855 to 1.557); CFI = 0.871, TLI = 0.828, RMSEA = 0.102 (90% CI 0.081-0.125), chi-square(27) = 98.4, p<.001. Described as marginal-to-acceptable fit.
+- Phase 2: All variables non-normal (Shapiro-Wilk p<.05) -> non-parametric tests. Analysis in jamovi 2.6.
+- Descriptives: MSPSS mean F 61.3 / M 56.7; BDD F 23.2 / M 23.7; BSS F 5.10 / M 5.91.
+- Mann-Whitney U: females higher perceived social support (U = 6455, p = .01, rank-biserial r = -0.18); no gender difference for BDD (U=7515, p=.53) or suicidal ideation (U=7213, p=.24).
+- Spearman: BDD-SI rho = 0.448; PSS-SI rho = -0.375; PSS-BDD rho = -0.311 (all p<.001). H1, H2, H3 all supported.
+- Ordinal logistic regression (DV = BSS): BDD beta = 0.0581 (SE .0094, z=6.18, p<.001) -> odds ratio about 1.06 per point; PSS beta = -0.0355 (SE .008, z=-4.47, p<.001) -> OR about 0.965 per point; gender beta = 0.009, p=.967 (not significant). McFadden R-squared = 0.05, AIC 1319.
+- Theory used: Veale's cognitive-behavioural model of BDD; Cohen & Wills (1985) stress-buffering hypothesis; Joiner's (2005) Interpersonal Theory of Suicide (thwarted belongingness, perceived burdensomeness).
+- Interpretation: self-reinforcing cycle - body shame -> social withdrawal -> lower perceived support -> more symptoms and suicide risk. Implications: suicide screening for subclinical body-image concern in college counselling; CBT, IPT, peer support; outreach to young men (lower support).
+- Limitations stated: cross-sectional (no causality), self-report bias, convenience sample, English-only. Future: longitudinal design; SEM to test social support as mediator.
+- Ethics: SRM University review board approval; written informed consent; anonymity; right to withdraw/skip; debriefing; mental-health support resources given after completion.
+- Weak spots a panel may probe: "cultural validation" done only with reliability + CFA on an English-speaking sample (no translation, test-retest, convergent validity); RMSEA > .08 and CFI < .90; McFadden R2 only .05; gender moderation (aim) not tested with interaction terms; risk protocol for participants with high BSS scores; non-clinical sample excludes those in treatment.
+
+CLINICAL INTERNSHIP: 30 days at Shadithya Hospital (psychiatric hospital). Internship supervisor: Mrs. Minu Bharathi. Wards: M3 (mental health & de-addiction, involuntary male) with case managers Mr. Nishanth, Mr. Balachander; M1 (deluxe, voluntary with attenders) under Ms. Ishwarya (clinical psychologist); M2 (male voluntary + involuntary) under Ms. Vinodhini; K2 (dementia) and K3 (female) under Ms. Fouziya. Also saw rTMS room, ECT/OT room. Daily 4-5 PM classes: case history taking, Mental Health Act 2017, MSE, interview skills, biopsychosocial model of schizophrenia, PTSD/anxiety, psychometrics, CBT & DBT, dementia & Cognitive Stimulation Therapy, marital counselling, substance use.
+What she did herself: MSEs (Mr R.J., schizophrenia with borderline intelligence & grandiose delusion of being son of a film actor; Mr R.X., schizophrenia; Mr S.B., dementia); MMSE on Mr M.D. (74M dementia); administered PHQ-9 and GAD-7 to Ms W.N. (16F, personality difficulties with quasi-psychotic features) after collateral revealed suicidal threats - both showed high scores and active suicidal ideation, escalated; cognitive tasks (clock drawing, Trail Making Test B, Digit Vigilance, Digit Symbol Substitution, Stroop, object naming); reminiscence therapy in dementia; pre-discharge goal-setting across six domains (physical, personal, professional, religious, social, relationship) with patients with depression, alcohol dependence, mania, polysubstance use, schizophrenia; relapse-prevention sessions; facilitated many group sessions (mindfulness/breathing, gratitude journalling, "My Ideal Day", "I Can, I Will, I Should", Letter to Self, Notice-Choose-Do, Jenga for impulse control, origami, word association); observed Rorschach administration; delivered a case presentation on schizophrenia plus role-play adherence psychoeducation; handled a patient with persecutory delusions with grounded reassurance without reinforcing the delusion; engaged low-insight polysubstance patient (Mr N.K.) non-confrontationally. Ms J.S. (20F severe depression) on ECT without improvement; key stressor parental NEET pressure.
+
+FIVE CASE REPORTS she wrote:
+1. Mr LN, 34M, electrician, 40-day exacerbation on 3-year psychosis history: insomnia, withdrawal, grandiose-religious delusion ("Surya Bhagawan"), passivity phenomena, persecutory & referential & somatic delusions, commanding divine voice, tactile hallucinations, aggression; poor adherence; brother has depression. MSE: increased psychomotor activity, pressured incoherent speech, irritable labile mood, loosening of associations, absent insight. Diagnosis: provisional Schizophrenia; ECT planned. (Probe: why not mania with psychotic features / schizoaffective?)
+2. Mr SA, 24M, B.Des, unemployed, ADHD and dyslexia history, similar episode 2 years ago after breakup: 2 months irritability, abusive language, talkativeness, inflated self-esteem, decreased need for sleep, impulsive spending, increased cannabis use. MSE: pressured speech, circumstantiality, overvalued ideas, no delusions/hallucinations. Diagnosis: BPAD, current episode mania without psychotic symptoms. (Probe: substance-induced vs primary mania; ADHD vs mania.)
+3. Ms JS, 20F, NEET aspirant, hypothyroidism: 2-3 years low mood, emptiness, anhedonia, withdrawal, self-harm by scratching, suicidal ideation, poor adherence; critical parents; cultural beliefs. Diagnosis: Recurrent Depressive Disorder, current episode severe without psychotic symptoms. (Probe: why "recurrent" with a continuous course; thyroid role.)
+4. Mr MG, 49M, ship engine fitter, ischemic stroke 3 yrs ago, hypertension, epilepsy: insomnia after stopping medication, paranoia, persecutory/jealousy/somatic/supernatural delusions, auditory hallucinations, violence to wife, self-injury. Diagnosis: Organic Psychotic Disorder secondary to cerebrovascular disease; MRI, EEG advised.
+5. Mrs AN, 38F, former medical student, homemaker, married 2019: 8 years violence, paranoid accusations, fluctuating course with normal periods, impulsive episodes (pre-marital substance ingestion, running away), father alcoholic, conflict between families, non-adherence, threatened with knife on admission; previously rTMS. Diagnosis: provisional Schizophrenia; family therapy suggested. (Probe: differentials BPAD, emotionally unstable personality disorder.)
+Note: case reports contain no formal psychometric test section - a panel may ask which tests she would use.
+`;
+
+/* ============ QUESTION BANK ============ */
+const ROUNDS = {
+  about:{label:"About you"}, fit:{label:"Why MClinPsy & VMRF"}, intern:{label:"Internship"},
+  cases:{label:"Your case reports"}, research:{label:"Dissertation"}, clinical:{label:"Clinical knowledge"}, close:{label:"Closing"}
+};
+const Q = [
+ {id:"a1",r:"about",q:"Good morning, Najiya. Please tell us about yourself.",
+  hint:"Four beats, about 90 seconds: who you are and where you study → your internship in one line → your dissertation in one line → why MClinPsy now.",
+  pts:["Name, M.Sc. Clinical Psychology at SRM Medical College Hospital & Research Centre","30-day internship at Shadithya Hospital across five wards","Dissertation: BDD symptoms, perceived social support and suicidal ideation, N = 251","A personal reason for clinical work, and why the RCI route is the next step"],
+  probes:["You mentioned your internship. What is one moment from it you still think about?"]},
+ {id:"a2",r:"about",q:"What are your strengths and one real weakness as a future clinical psychologist?",
+  hint:"Pick a strength you can prove with an internship moment. Pick a weakness that is real but workable, and say what you are doing about it.",
+  pts:["Strength backed by evidence (staying calm with Ms. S.R.'s agitation; noticing risk in Ms. W.N.)","A genuine weakness (e.g. over-preparing, hesitating to speak up in case discussions)","A concrete step you are taking to improve it"],
+  probes:["How would your internship supervisor describe you?"]},
+ {id:"a3",r:"about",q:"Interviews are stressful. How do you manage your own stress, and how will you protect yourself from burnout in clinical work?",
+  hint:"Be honest that you feel nervous. Then name what you actually do, and mention supervision and self-reflection as professional tools.",
+  pts:["Honest acknowledgement","Personal strategies (breathing, routine, people you talk to)","Supervision, reflective practice, boundaries with patients"],
+  probes:["Was there a patient interaction during your internship that stayed with you emotionally? How did you handle it?"]},
+ {id:"f1",r:"fit",q:"You already have an M.Sc. in Clinical Psychology. Why do you want to do the MClinPsy?",
+  hint:"An M.Sc. teaches the subject. The RCI MClinPsy trains and licenses you to practise. Connect that to what you saw at Shadithya.",
+  pts:["Only an RCI-recognised professional qualification allows registration and practice as a Clinical Psychologist in India","Supervised, structured clinical training: assessment, diagnosis, therapy","Internship showed you the gap between observing and independently assessing and treating"],
+  probes:["What is the RCI, and why does registration matter for patients?"]},
+ {id:"f2",r:"fit",q:"Why Vinayaka Mission's? What do you know about this programme?",
+  hint:"Two-year RCI MClinPsy, School of Rehabilitation and Behavioural Sciences, attached to a medical college hospital. Say what that hospital exposure means for you.",
+  pts:["Two-year RCI-recognised MClinPsy","Hospital-based training through the medical college campus in Puducherry: diverse inpatient and outpatient cases","Multidisciplinary setting similar to what you valued at Shadithya","Your own reasons: location, faculty, research interest"],
+  probes:["Where do you see yourself five years after completing this programme?"]},
+ {id:"i1",r:"intern",q:"Walk us through your clinical internship. Where was it, what did you see, and what did you actually do yourself?",
+  hint:"Separate observed from done. Done: MSEs, MMSE, PHQ-9/GAD-7, cognitive tasks, goal-setting, relapse prevention, group sessions, a case presentation.",
+  pts:["Shadithya Hospital, 30 days, wards M1, M2, M3, K2 (dementia), K3 (female)","Supervisor Mrs. Minu Bharathi; ward psychologists Ms. Ishwarya, Ms. Vinodhini, Ms. Fouziya","Independently: MSEs, MMSE, PHQ-9/GAD-7, TMT-B, clock drawing, goal-setting, group sessions","Observed: Rorschach, psychiatric reviews, ECT and rTMS"],
+  probes:["Of everything you did there, what were you least confident doing, and why?"]},
+ {id:"i2",r:"intern",q:"Tell us about the most challenging patient you worked with during the internship.",
+  hint:"A strong choice: Ms. W.N., 16F. She looked quiet, but collateral revealed suicidal threats. You screened with PHQ-9 and GAD-7, found active ideation, and escalated.",
+  pts:["Brief presentation","What you noticed and did (collateral, screening, escalation to the team)","What it taught you: risk can hide behind a quiet presentation; always screen actively","Your feelings, and how you used supervision"],
+  probes:["When a patient tells you about suicidal thoughts, what exactly do you do in that session?","PHQ-9 is a screening tool. What would a full suicide risk assessment include?"]},
+ {id:"i3",r:"intern",q:"You conducted Mental State Examinations. Take one patient and walk us through your MSE findings.",
+  hint:"Use Mr. R.J. or Mr. L.N. Go in order: appearance and behaviour, psychomotor, speech, mood and affect, thought (form, stream, content), perception, cognition, insight, judgement.",
+  pts:["All MSE domains in order","Correct terms: loosening of associations, grandiose delusion, labile affect","Difference between mood (subjective) and affect (observed)","Insight grading"],
+  probes:["What is the difference between a delusion and an overvalued idea?","How do you grade insight?"]},
+ {id:"i4",r:"intern",q:"You used Jenga, the Stroop task and the Digit Vigilance Test in group sessions. Why those activities? Are they assessments or therapy?",
+  hint:"Be precise. In a group these were structured engagement and cognitive stimulation, not standardised assessments. Real norms-based testing needs standard administration.",
+  pts:["Purpose: attention, inhibition, impulse control, engagement","Distinguish therapeutic activity from standardised assessment","What standardised administration and norms require"],
+  probes:["What does the Trail Making Test Part B measure, and how is it scored?"]},
+ {id:"i5",r:"intern",q:"Ms. J.S. was receiving ECT with no improvement, and her key stressor was parental pressure about NEET. If you were her psychologist, what would your plan be?",
+  hint:"Biology alone is not enough here. Plan: risk assessment, CBT for depression, family intervention around criticism and expectations (expressed emotion), psychoeducation, adherence.",
+  pts:["Ongoing suicide risk monitoring (self-harm, ideation)","CBT: cognitive triad, behavioural activation, worthlessness cognitions","Family sessions: expressed emotion, academic pressure, cultural beliefs about illness","Coordinate with psychiatry; thyroid status; adherence"],
+  probes:["What is expressed emotion, and why does it matter for relapse?"]},
+ {id:"i6",r:"intern",q:"Mr. N.K. denied his addiction and wanted to be discharged. How do you work with a patient who has no insight or motivation?",
+  hint:"Stages of change (precontemplation), motivational interviewing (OARS, rolling with resistance), and what you actually did: a neutral TMT-B task, then non-preachy psychoeducation.",
+  pts:["Prochaska & DiClemente: precontemplation","Motivational interviewing principles","What you did, and why you avoided confrontation","Discharge against medical advice: the risks"],
+  probes:["Give one example of a reflective statement you might say to him."]},
+ {id:"i7",r:"intern",q:"You attended a class on the Mental Health Act, 2017. Tell us the key provisions that matter for a clinical psychologist.",
+  hint:"Rights-based law: right to access care, advance directives, nominated representative, supported and independent admission, confidentiality, and Section 115 on attempted suicide.",
+  pts:["Right to access mental healthcare","Advance directive and nominated representative","Independent and supported admission (relevant to M2/M3 involuntary patients)","Section 115: a suicide attempt is presumed to involve severe stress, so the focus is care, not punishment","Confidentiality and dignity"],
+  probes:["What is the difference between independent and supported admission?"]},
+ {id:"c1",r:"cases",q:"Your first case report, Mr. L.N., was diagnosed with schizophrenia. But he had increased psychomotor activity, pressured speech, irritable labile mood and grandiosity. Why not mania with psychotic features, or schizoaffective disorder?",
+  hint:"Argue from the course: a 3-year psychotic illness with incomplete remission, passivity phenomena (a first-rank symptom), and mood symptoms that were not the dominant, sustained picture. Say the diagnosis is provisional and needs longitudinal observation.",
+  pts:["Course: 3 years, episodic, incomplete remission between episodes","First-rank symptom: passivity (delusions of control)","Mood symptoms are not prominent and sustained enough for a mood disorder","Schizoaffective needs mood and schizophrenic symptoms equally prominent in the same episode","Provisional, so you would track it over time"],
+  probes:["List Schneider's first-rank symptoms. Which ones did Mr. L.N. have?","Is a commanding voice a first-rank symptom?"]},
+ {id:"c2",r:"cases",q:"Mr. S.A. had ADHD, was using more cannabis, and had a manic picture. How did you rule out substance-induced mania, and how do you tell ADHD from mania?",
+  hint:"Timeline: did mood symptoms precede or outlast the cannabis use? There was a previous episode 2 years ago. ADHD is a stable trait from childhood; mania is an episodic change from baseline, with decreased need for sleep and grandiosity.",
+  pts:["Temporal relationship; symptoms persisting during abstinence in hospital","Prior episode, so ICD-10 BPAD needs 2 or more episodes, at least one manic or hypomanic","ADHD: chronic and trait-like. Mania: episodic, reduced need for sleep, elevated self-esteem","Urine toxicology"],
+  probes:["Which rating scale would you use to track his manic symptoms?"]},
+ {id:"c3",r:"cases",q:"Ms. J.S.'s illness had a continuous 2 to 3 year course, but you wrote 'Recurrent Depressive Disorder'. Can you justify that? And what role does her hypothyroidism play?",
+  hint:"Know the criteria: recurrent needs at least two episodes separated by a period of remission. If she never remitted, consider dysthymia with a superimposed severe episode, or a single severe episode. Hypothyroidism can mimic or worsen depression, so check TFTs before calling it primary.",
+  pts:["ICD-10 recurrent depressive disorder: 2 or more episodes, each at least 2 weeks, separated by several months without significant mood disturbance","Honest differential: persistent depressive disorder / double depression","Hypothyroidism: organic contribution, so check T3/T4/TSH","Self-harm and suicidal ideation, so risk management"],
+  probes:["Which scales would you use to assess her severity and her suicide risk?"]},
+ {id:"c4",r:"cases",q:"For Mr. M.G., who developed psychosis after a stroke, what would a clinical psychologist add to his assessment beyond the MRI and EEG?",
+  hint:"Neuropsychological assessment: cognitive screening (MMSE, ACE-III, MoCA), then domain-wise testing (memory, executive function, language given dysphasia), plus behavioural and caregiver assessment.",
+  pts:["Cognitive screening, then a neuropsychological battery (e.g. NIMHANS battery, PGI Battery of Brain Dysfunction)","Adapting tests for his dysphasia","Differential with epilepsy-related (interictal) psychosis","Caregiver burden and safety: violence toward his wife"],
+  probes:["Why is his epilepsy history important for the differential diagnosis?"]},
+ {id:"c5",r:"cases",q:"Mrs. A.N. had episodes of violence with periods of normal functioning, impulsive acts and family conflict. Why schizophrenia? What else would you consider?",
+  hint:"It is provisional. Differentials: bipolar disorder (episodic, 7 to 10 day deteriorations), emotionally unstable personality disorder (impulsivity, self-harm, unstable relationships), delusional disorder. Psychological testing would help.",
+  pts:["Persistent paranoid ideation supports psychosis","Episodic course with normal periods points to BPAD","Impulsivity, past self-harm and family environment suggest personality pathology","Tests: MMPI-2 / MCMI, IPDE, Rorschach, a mood rating scale"],
+  probes:["How would you work with two families who disagree about her treatment?"]},
+ {id:"c6",r:"cases",q:"None of your case reports include a psychological testing section. If you had full access, which tests would you have administered for your schizophrenia cases?",
+  hint:"Symptom severity (PANSS, BPRS, SAPS/SANS), projective (Rorschach, TAT), cognition (MMSE screen, then neuropsych), intelligence where relevant (WAPIS / Bhatia's battery). Give a reason for each.",
+  pts:["PANSS or BPRS for severity and tracking","Rorschach or TAT for thought disorder and reality testing","Cognitive and intellectual assessment (e.g. for Mr. R.J. with borderline intelligence: WAPIS, Bhatia's battery, VSMS)","Why: diagnosis, baseline, treatment planning"],
+  probes:["What is the difference between reliability and validity of a test?"]},
+ {id:"r1",r:"research",q:"Explain your dissertation to us in two minutes: the question, the method, and what you found.",
+  hint:"Question → why it matters in India → design (N = 251, three scales) → three numbers (ρ = .448, −.375, −.311) → one-line takeaway: body-image distress is a risk factor and social support is protective.",
+  pts:["Aim and rationale: subclinical BDD symptoms in Indian young adults","Cross-sectional, N = 251, 18–26, BS-BDD, MSPSS, BSS","Phase 1 validation (α = .809) and Phase 2 correlations and regression","Key result and clinical implication"],
+  probes:["Why did you choose this topic? Was there something personal or clinical behind it?"]},
+ {id:"r2",r:"research",q:"You called Phase 1 a 'cultural validation' of the BS-BDD. You checked reliability and ran a CFA on English-speaking students. Is that really cultural validation?",
+  hint:"Do not get defensive. Agree it is a preliminary psychometric evaluation. Full cultural adaptation would need translation and back-translation, expert review, test-retest, and convergent and discriminant validity.",
+  pts:["Concede the limit gracefully","What you did establish: internal consistency (.809) and single-factor structure","What full validation needs: translation, cognitive interviewing, test-retest, convergent validity (e.g. with BDD-YBOCS), norms","Turn it into future work"],
+  probes:["Why did you run a CFA rather than an EFA first?"]},
+ {id:"r3",r:"research",q:"Your CFA had an RMSEA of 0.102 and a CFI of 0.871. Those are below the usual cut-offs. How do you justify saying the model fits?",
+  hint:"Know the cut-offs (RMSEA ≤ .08, ideally ≤ .06; CFI/TLI ≥ .90, ideally ≥ .95). Say honestly the fit is marginal. Strong loadings support one factor; RMSEA is inflated with low degrees of freedom; next steps are modification indices or a two-factor model.",
+  pts:["Cut-offs (Hu & Bentler; Browne & Cudeck)","Admit the fit is marginal","Mitigation: all loadings significant, α good, RMSEA sensitive to low df (27)","What you would test next: correlated residuals, a two-factor model, a larger sample"],
+  probes:["What exactly does RMSEA measure?"]},
+ {id:"r4",r:"research",q:"Why did you use Spearman's correlation and ordinal logistic regression instead of Pearson's and multiple linear regression?",
+  hint:"Shapiro-Wilk showed non-normal data in both groups. BSS scores are skewed with many low scores, so you treated them as ordered categories. Ordinal regression does not assume normal residuals.",
+  pts:["Normality violated (Shapiro-Wilk p < .05)","Spearman is rank-based","BSS is skewed and ordinal-like, which suits ordinal logistic regression","Assumption to mention: proportional odds"],
+  probes:["What is the proportional odds assumption, and did you check it?"]},
+ {id:"r5",r:"research",q:"Interpret your regression for us. What does a beta of 0.058 for body dysmorphic symptoms actually mean?",
+  hint:"It is a log-odds coefficient. e^0.058 ≈ 1.06, so each extra BS-BDD point raises the odds of being in a higher suicidal-ideation category by about 6%. Ten points ≈ 1.8 times the odds. For social support, e^−0.0355 ≈ 0.965, about 3.5% lower odds per point.",
+  pts:["Log-odds coefficient, so convert to an odds ratio","BDD: OR ≈ 1.06 per point (≈ 1.8× per 10 points)","PSS: OR ≈ 0.965 per point (≈ 30% lower odds per 10 points)","Independent of each other and of gender; gender p = .967"],
+  probes:["Your McFadden R² is only 0.05. Doesn't that mean the model explains almost nothing?"]},
+ {id:"r6",r:"research",q:"You measured suicidal ideation in a non-clinical sample. What would you do if a participant scored high on the Beck Scale? What was your protocol?",
+  hint:"Say exactly what you did (ethics approval, consent, debrief, support resources given). If there was no formal referral protocol, say so honestly, then describe what an ideal one looks like.",
+  pts:["What you actually did: SRM review board approval, consent, debriefing, resources","Ideal: flag high or critical items, contact and refer, helpline numbers, supervisor informed","Anonymity versus duty of care: the tension","Honesty about what you would do better"],
+  probes:["How do you balance anonymity with your duty of care to someone at risk?"]},
+ {id:"r7",r:"research",q:"One of your aims was to compare these patterns across males and females. Did you actually test whether gender moderates the relationships?",
+  hint:"Be accurate. You tested gender differences in levels (Mann-Whitney) and gender as a predictor in the regression (not significant). True moderation needs interaction terms or comparing correlations by group (Fisher's z). That is future work.",
+  pts:["What you did: Mann-Whitney (females higher PSS, U = 6455, p = .01, small effect); gender as a predictor (p = .967)","What moderation requires: interaction terms (BDD × gender) or Fisher's r-to-z","Honest framing and next step"],
+  probes:["Why might men report lower perceived social support in India?"]},
+ {id:"r8",r:"research",q:"Which theory best explains your findings, and how would you test it in a future study?",
+  hint:"Joiner's Interpersonal Theory of Suicide (thwarted belongingness, perceived burdensomeness), plus Cohen & Wills' stress-buffering hypothesis and Veale's CBT model of BDD. Test: a longitudinal design and SEM with social support as a mediator.",
+  pts:["Interpersonal Theory of Suicide","Stress-buffering hypothesis","Veale's cognitive-behavioural model (self-focused attention, appearance-based self-worth)","Future: longitudinal design, SEM or mediation, clinical samples, translated tool"],
+  probes:["What is the difference between a mediator and a moderator? Use your own variables."]},
+ {id:"r9",r:"research",q:"What are the limitations of your study, and if you could redo it, what one change would you make?",
+  hint:"Name three clearly: cross-sectional design, self-report and convenience sample, English-only. Then add one the panel will respect: no translated tool or clinical comparison group. Pick one redesign and explain why.",
+  pts:["Cross-sectional, so no causality","Self-report bias; convenience, English-speaking, non-clinical sample","Exclusion of people in treatment restricts range","One concrete redesign"],
+  probes:["What sampling method would you use instead, and why?"]},
+ {id:"k1",r:"clinical",q:"How is body dysmorphic disorder classified, and how would you differentiate it from an eating disorder or social anxiety?",
+  hint:"DSM-5: obsessive-compulsive and related disorders, with a muscle dysmorphia specifier and insight specifiers. ICD-11: also OCRD. Differentiate by the focus of concern and the function of the behaviour.",
+  pts:["DSM-5 OCRD; repetitive behaviours (mirror checking, comparing)","Specifiers: muscle dysmorphia; insight good, poor or absent/delusional","Eating disorder: concern limited to weight and shape with eating behaviour","Social anxiety: fear of evaluation not centred on a perceived defect"],
+  probes:["What is the first-line treatment for BDD?"]},
+ {id:"k2",r:"clinical",q:"Explain the cognitive model of depression and how you would use CBT with a depressed young adult.",
+  hint:"Beck: cognitive triad (self, world, future), schemas, automatic thoughts, cognitive distortions. CBT: psychoeducation, activity scheduling and behavioural activation, thought records, restructuring, relapse prevention.",
+  pts:["Cognitive triad, schemas, automatic thoughts","Distortions (all-or-nothing, catastrophising)","Session structure and techniques","Measuring progress (BDI-II)"],
+  probes:["Give an example of an automatic thought Ms. J.S. might have, and how you would challenge it."]},
+ {id:"k3",r:"clinical",q:"What are the limits of confidentiality in clinical practice?",
+  hint:"Risk to self, risk to others (duty to warn or protect, Tarasoff), child abuse, court orders. Explain these limits at the start, during informed consent.",
+  pts:["Explained during informed consent","Risk to self or others; Tarasoff","Safeguarding (minors), legal orders","Share only what is necessary, and document it"],
+  probes:["A 16-year-old asks you not to tell her parents she has suicidal thoughts. What do you do?"]},
+ {id:"x1",r:"close",q:"Thank you, Najiya. Do you have any questions for us?",
+  hint:"Always ask one or two. For example: the case mix and rotation pattern in the first year, research expectations, or supervision structure.",
+  pts:["One or two genuine questions","Nothing about salary or leave","A warm closing thank-you"],probes:[]}
+];
+
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+
+/* ============ capabilities (Netlify build: own API + browser speech) ============ */
+function makeSample(){
+  async function call(prompt, opts){
+    let r;
+    try{
+      r = await fetch("/.netlify/functions/ask", { method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ prompt, tier: (opts && opts.modelTier) || "default" }) });
+    }catch(e){ throw {code:"upstream_error", message:String(e)}; }
+    const data = await r.json().catch(() => ({}));
+    if(!r.ok){ throw {code: r.status === 503 ? "not_granted" : r.status === 429 ? "rate_limited" : "upstream_error", message: data.error || r.statusText}; }
+    return { text: data.text || "" };
+  }
+  const fn = (p, o) => call(p, o);
+  fn.json = async (p, o) => {
+    const { text } = await call(p, o);
+    const tryParse = t => { try{ return JSON.parse(t); }catch(e){ return undefined; } };
+    let v = tryParse(text.trim());
+    if(v === undefined){ const m = text.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) v = tryParse(m[1]); }
+    if(v === undefined){ const a = text.search(/[\[{]/), b = Math.max(text.lastIndexOf("}"), text.lastIndexOf("]")); if(a >= 0 && b > a) v = tryParse(text.slice(a, b+1)); }
+    if(v === undefined) throw {code:"invalid_json", message:"Could not parse", text};
+    return v;
+  };
+  return fn;
+}
+function makeTTS(){
+  if(!("speechSynthesis" in window)) return null;
+  const subs = [];
+  const emit = st => subs.forEach(f => f({state:st}));
+  const pickVoice = () => { const vs = speechSynthesis.getVoices(); return vs.find(v => /en-IN/i.test(v.lang)) || vs.find(v => /en-GB/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)); };
+  return {
+    speak(text, opts){ return new Promise((res, rej) => {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text); const v = pickVoice(); if(v) u.voice = v;
+      u.rate = (opts && opts.rate) || 0.95;
+      u.onstart = () => emit("speaking"); u.onend = () => { emit("idle"); res(); }; u.onerror = e => { emit("idle"); rej({code:"error"}); };
+      speechSynthesis.speak(u);
+    }); },
+    stop(){ speechSynthesis.cancel(); emit("idle"); },
+    onState(f){ subs.push(f); }
+  };
+}
+function makeDictation(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return null;
+  let rec = null, onP = () => {}, onF = () => {}, onS = () => {}, stopResolve = null;
+  return {
+    start(){
+      return new Promise((res, rej) => {
+        rec = new SR(); rec.lang = "en-IN"; rec.continuous = true; rec.interimResults = true;
+        rec.onstart = () => { onS({state:"listening"}); res(); };
+        rec.onresult = e => {
+          let interim = "";
+          for(let i = e.resultIndex; i < e.results.length; i++){
+            const r = e.results[i];
+            if(r.isFinal) onF({text: " " + r[0].transcript.trim()}); else interim += r[0].transcript;
+          }
+          onP({text: interim});
+        };
+        rec.onerror = e => { const code = e.error === "not-allowed" ? "not_granted" : "upstream_error"; onS({state:"idle", reason: code}); rej({code}); };
+        rec.onend = () => { onS({state:"idle", reason:"stopped"}); onP({text:""}); if(stopResolve){ stopResolve(); stopResolve = null; } };
+        try{ rec.start(); }catch(err){ rej({code:"upstream_error"}); }
+      });
+    },
+    stop(){ return new Promise(res => { if(!rec){ res(); return; } stopResolve = res; try{ rec.stop(); }catch(e){ res(); } }); },
+    onPartial(f){ onP = f; }, onFinal(f){ onF = f; }, onState(f){ onS = f; }
+  };
+}
+let sample = makeSample(), tts = makeTTS(), dict = makeDictation(), aiOK = true;
+(async () => {
+  try{
+    const r = await fetch("/.netlify/functions/ask", {method:"GET"});
+    const d = await r.json().catch(() => ({}));
+    aiOK = r.ok && d.ready;
+  }catch(e){ aiOK = false; }
+  $("#aiStatus").textContent = aiOK ? "AI panel ready." : "AI isn't connected (no API key set), so you'll practise with model-answer pointers instead.";
+  if(!tts){ $("#voiceOn").checked = false; $("#voiceOn").closest("label").hidden = true; $("#replayBtn").hidden = true; }
+  if(dict){ $("#micBtn").hidden = false; setupDictation(); }
+  if(tts){ tts.onState(({state}) => $("#avatar").classList.toggle("speaking", state === "speaking")); }
+})();
+
+/* ============ navigation ============ */
+const views = ["home","room","report","notes","history"];
+function show(v){
+  views.forEach(n => $("#view-"+n).hidden = n !== v);
+  const tab = v === "notes" ? "notes" : v === "history" ? "history" : "practice";
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.id === "tab-"+tab));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  const v = b.dataset.view;
+  if(v === "home" && session && !session.done){ show("room"); return; }
+  if(v === "notes") renderNotes();
+  if(v === "history") renderHistory();
+  show(v);
+});
+
+/* greeting */
+(() => { const h = new Date().getHours(); const g = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+  $("#greet").textContent = `${g}, Jiya. You already know this material.`; })();
+
+/* ============ breathing ============ */
+function breathe(orb, label, rounds, done){
+  const phases = [["Breathe in",1.9],["Hold",1.9],["Breathe out",1],["Hold",1]];
+  let step = 0, total = rounds*4, timer;
+  const tick = () => {
+    if(step >= total){ label.textContent = "Well done"; orb.style.transform = "scale(1)"; done && done(); return; }
+    const [t,s] = phases[step%4]; label.textContent = t; orb.style.transform = `scale(${s})`; step++;
+    timer = setTimeout(tick, 4000);
+  };
+  tick(); return () => clearTimeout(timer);
+}
+let stopBreath = null;
+$("#breatheBtn").onclick = () => {
+  if(stopBreath){ stopBreath(); stopBreath = null; $("#breatheBtn").textContent = "Start breathing"; $("#orbLabel").textContent = "Ready"; $("#orb").style.transform="scale(1)"; return; }
+  $("#breatheBtn").textContent = "Stop";
+  stopBreath = breathe($("#orb"), $("#orbLabel"), 4, () => { stopBreath = null; $("#breatheBtn").textContent = "Breathe again"; });
+};
+
+/* ============ setup ============ */
+let cfg = { session:"full", mode:"coach", round:"research" };
+function pressGroup(sel, attr, val){ document.querySelectorAll(sel).forEach(b => b.setAttribute("aria-pressed", b.dataset[attr] === val)); }
+document.querySelectorAll("#sessionOpts .opt").forEach(b => b.onclick = () => { cfg.session = b.dataset.session; pressGroup("#sessionOpts .opt","session",cfg.session); $("#roundChips").hidden = cfg.session !== "round"; });
+document.querySelectorAll("#modeOpts .opt").forEach(b => b.onclick = () => { cfg.mode = b.dataset.mode; pressGroup("#modeOpts .opt","mode",cfg.mode); });
+$("#roundChips").innerHTML = ["about","fit","intern","cases","research","clinical"].map(r => `<button class="chip" data-round="${r}" aria-pressed="${r===cfg.round}">${ROUNDS[r].label}</button>`).join("");
+document.querySelectorAll("#roundChips .chip").forEach(b => b.onclick = () => { cfg.round = b.dataset.round; pressGroup("#roundChips .chip","round",cfg.round); });
+
+function buildPlan(){
+  if(cfg.session === "round") return Q.filter(q => q.r === cfg.round);
+  const pick = (r,n) => shuffle(Q.filter(q => q.r === r)).slice(0,n);
+  const about = Q.find(q => q.id === "a1");
+  const others = shuffle(Q.filter(q => q.r === "about" && q.id !== "a1")).slice(0,1);
+  return [about, ...pick("fit",1), ...pick("intern",2), ...pick("cases",1), ...pick("research",3), ...pick("clinical",1), ...others, Q.find(q => q.id === "x1")]
+    .slice(0,11).filter((q,i,a)=>a.indexOf(q)===i);
+}
+
+/* ============ session ============ */
+let session = null, cur = null, tStart = 0, tInt = null;
+$("#startBtn").onclick = () => {
+  if(stopBreath){ stopBreath(); stopBreath = null; }
+  session = { id: Date.now(), mode: cfg.mode, label: cfg.session === "full" ? "Full mock interview" : ROUNDS[cfg.round].label, plan: buildPlan(), i: 0, items: [], done:false };
+  show("room");
+  askMain();
+};
+
+function maxDepth(){ return session.mode === "real" ? 3 : 2; } // main + follow-ups
+function askMain(ack){
+  if(session.i >= session.plan.length){ finish(); return; }
+  const seed = session.plan[session.i];
+  cur = { seed, q: seed.q, depth: 1, thread: [] };
+  renderQuestion(ack);
+}
+function renderQuestion(ack){
+  const seed = cur.seed;
+  $("#qMeta").textContent = `Question ${session.i+1} of ${session.plan.length} · ${ROUNDS[seed.r].label}${cur.depth > 1 ? " · follow-up" : ""}`;
+  $("#ackLine").hidden = !ack; $("#ackLine").textContent = ack || "";
+  $("#questionText").textContent = cur.q;
+  $("#answer").value = ""; $("#partial").textContent = ""; $("#hintBox").hidden = true; updateWords();
+  $("#desk").hidden = false; $("#feedback").hidden = true; $("#thinking").hidden = true;
+  $("#submitBtn").disabled = false;
+  $("#trail").innerHTML = session.plan.map((_,k) => `<span class="${k < session.i ? "done" : k === session.i ? "now" : ""}"></span>`).join("");
+  clearInterval(tInt); tStart = Date.now(); tInt = setInterval(updateTimer, 1000); updateTimer();
+  speak((ack ? ack + " " : "") + cur.q);
+  setTimeout(() => $("#answer").focus({preventScroll:true}), 50);
+}
+function updateTimer(){ const s = Math.floor((Date.now()-tStart)/1000); $("#timer").textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`; $("#timer").style.color = s > 180 ? "var(--warn)" : ""; }
+function updateWords(){ const n = ($("#answer").value.trim().match(/\S+/g) || []).length; $("#words").textContent = `${n} word${n===1?"":"s"}`; }
+$("#answer").addEventListener("input", updateWords);
+
+function speak(text){
+  if(!tts || !$("#voiceOn").checked) return;
+  tts.speak(text, {voice:"rounded", rate:0.95, language:"en"}).catch(()=>{});
+}
+$("#replayBtn").onclick = () => { if(tts) tts.speak(cur.q, {voice:"rounded", rate:0.92, language:"en"}).catch(()=>{}); };
+
+$("#hintBtn").onclick = () => {
+  const h = cur.depth === 1 ? cur.seed.hint :
+    "Take a breath. Answer directly in one sentence first, then give one example from your own internship or thesis, then say what it taught you. It's fine to say: “That's a good question. Let me think for a moment.”";
+  $("#hintBox").innerHTML = `<b>Hint.</b> ${esc(h)}`; $("#hintBox").hidden = false;
+  cur.usedHint = true;
+};
+$("#skipBtn").onclick = () => { $("#answer").value = ""; submit(true); };
+$("#submitBtn").onclick = () => submit(false);
+
+/* dictation */
+let listening = false;
+function setupDictation(){
+  dict.onPartial(({text}) => { $("#partial").textContent = text; });
+  dict.onFinal(({text}) => { const ta = $("#answer"); ta.value = (ta.value ? ta.value : "") + (ta.value ? text : text.replace(/^\s+/,"")); $("#partial").textContent = ""; updateWords(); });
+  dict.onState(({state, reason}) => {
+    listening = state !== "idle";
+    $("#micBtn").classList.toggle("on", listening);
+    $("#micBtn").setAttribute("aria-label", listening ? "Stop speaking" : "Speak your answer");
+    if(state === "idle" && (reason === "not_granted" || reason === "unavailable")) $("#micBtn").hidden = true;
+  });
+}
+$("#micBtn").onclick = () => {
+  if(!dict) return;
+  if(listening){ dict.stop().catch(()=>{}); return; }
+  if(tts) { try{ tts.stop(); }catch(e){} }
+  dict.start().catch(e => { if(e && (e.code === "not_granted" || e.code === "unavailable")) $("#micBtn").hidden = true; });
+};
+
+/* pause */
+let stopBreath2 = null;
+$("#pauseBtn").onclick = () => {
+  $("#breathOverlay").hidden = false; if(tts){ try{ tts.stop(); }catch(e){} }
+  const lines = ["You are allowed to pause. Real panels expect it.","You wrote 125 pages on this. Nobody in that room knows your study better than you.","Slow is fine. Clear beats fast.","If you don't know, say so honestly and say how you'd find out. That is a clinical skill."];
+  $("#calmLine").textContent = lines[Math.floor(Math.random()*lines.length)];
+  stopBreath2 = breathe($("#orb2"), $("#orbLabel2"), 3);
+};
+$("#resumeBtn").onclick = () => { if(stopBreath2) stopBreath2(); $("#breathOverlay").hidden = true; };
+
+/* ============ evaluation ============ */
+async function submit(skipped){
+  if(listening && dict){ try{ await dict.stop(); }catch(e){} }
+  const answer = $("#answer").value.trim();
+  if(!answer && !skipped){ $("#hintBox").innerHTML = "Write or say something first, even one sentence. Or press <b>Skip</b>."; $("#hintBox").hidden = false; return; }
+  clearInterval(tInt);
+  const secs = Math.floor((Date.now()-tStart)/1000);
+  const turn = { seedId: cur.seed.id, round: cur.seed.r, q: cur.q, answer: answer || "(skipped)", secs, depth: cur.depth, hint: !!cur.usedHint };
+  cur.usedHint = false;
+  $("#desk").hidden = true; $("#thinking").hidden = false;
+  $("#thinkingText").textContent = session.mode === "real" ? "The panel is noting your answer…" : "The panel is considering your answer…";
+  const ev = await evaluate(turn);
+  turn.ev = ev; cur.thread.push(turn); session.items.push(turn);
+  $("#thinking").hidden = true;
+  const canFollow = ev.followUp && cur.depth < maxDepth() && cur.seed.r !== "close" && !skipped;
+  if(session.mode === "real"){
+    if(canFollow){ cur.depth++; cur.q = ev.followUp; renderQuestion(ev.ack); }
+    else { session.i++; askMain(ev.ack || "Thank you."); }
+  } else {
+    renderFeedback(turn, canFollow);
+  }
+}
+
+async function evaluate(turn){
+  const seed = cur.seed;
+  const fallback = () => {
+    const pr = seed.probes || [];
+    return { score:null, verdict:"Compare your answer with the pointers below.", strengths:[], improve:[], betterLine:"", factCheck:[],
+      followUp: pr[turn.depth-1] || "", ack: "Thank you.", offline:true };
+  };
+  if(!sample || !aiOK) return fallback();
+  const earlier = cur.thread.map(t => `Q: ${t.q}\nA: ${t.answer}`).join("\n\n");
+  const prompt =
+`You are a senior clinical psychology faculty member on the admission interview panel for the RCI MClinPsy programme at Vinayaka Mission's Research Foundation. You are running a MOCK interview to prepare the candidate, Najiya Nazeer ("Jiya"), for her real personal interview tomorrow morning. She is very nervous, so be warm, specific and encouraging, but honest. Never harsh, never sarcastic.
+
+CANDIDATE FILE (ground truth from her own dissertation, internship report and case histories). Use it to check her facts. Never invent facts about her that are not in this file; if you suggest she say something about her experience, it must be supported here:
+${PROFILE}
+
+MODE: ${session.mode === "real" ? "realistic interview (feedback is stored for the end)" : "coaching"}
+TOPIC AREA: ${ROUNDS[seed.r].label}
+SEED QUESTION: ${seed.q}
+WHAT A STRONG ANSWER COVERS: ${seed.pts.join("; ")}
+EXAMPLE PROBES A PANEL MIGHT USE: ${(seed.probes||[]).join(" | ") || "none"}
+${earlier ? "EARLIER EXCHANGE ON THIS TOPIC:\n" + earlier + "\n" : ""}
+CURRENT QUESTION (follow-up depth ${turn.depth}): ${turn.q}
+HER ANSWER (${turn.secs}s${turn.hint ? ", she used a hint" : ""}${turn.answer.length < 3 ? ", empty" : ""}): ${turn.answer}
+
+Reply with ONLY a JSON object:
+{"score": integer 1-5 (5 = panel-ready, 3 = acceptable but thin, 1 = skipped or wrong),
+ "verdict": "one short sentence, under 14 words",
+ "strengths": ["up to 3 specific things she did well, each under 22 words"],
+ "improve": ["up to 3 specific, actionable improvements, each under 25 words"],
+ "betterLine": "1-3 sentences she could actually say out loud, first person, natural Indian-English interview register, using her real facts from the file",
+ "factCheck": ["any statement that contradicts the file or is factually wrong in psychology, with the correction; [] if none"],
+ "followUp": "${turn.depth < maxDepth() ? "ONE probing follow-up question a real panel would ask next, built on something specific she just said (go one level deeper: why, how exactly, defend a limitation, what would you do). If she skipped, ask an easier related question" : ""}",
+ "ack": "a short, neutral spoken acknowledgement a panelist would say, e.g. 'Alright, thank you.' or 'Okay, I see.'"}
+If the answer is empty or 'I don't know', give score 1-2 and make betterLine model an honest, graceful way to handle not knowing plus what she does know.`;
+  try{
+    const r = await sample.json(prompt, { modelTier:"quick", cache:false });
+    if(!r || typeof r !== "object") return fallback();
+    return {
+      score: Math.max(1, Math.min(5, parseInt(r.score) || 3)),
+      verdict: String(r.verdict || ""), strengths: (r.strengths||[]).map(String).slice(0,3), improve: (r.improve||[]).map(String).slice(0,3),
+      betterLine: String(r.betterLine || ""), factCheck: (r.factCheck||[]).map(String).filter(Boolean).slice(0,3),
+      followUp: turn.depth < maxDepth() ? String(r.followUp || "") : "", ack: String(r.ack || "Thank you.")
+    };
+  }catch(e){
+    if(e && ["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(e.code)){
+      aiOK = false; $("#aiStatus").textContent = "AI is off for this page, so you'll practise with model-answer pointers.";
+    }
+    const f = fallback();
+    if(e && e.code === "rate_limited") f.verdict = "The AI panel needs a short break. Here are the pointers meanwhile.";
+    return f;
+  }
+}
+
+function scoreBar(n){ return `<span class="score" aria-label="Score ${n} of 5">${[1,2,3,4,5].map(i=>`<i class="${n && i<=n ? "on":""}"></i>`).join("")}</span>`; }
+function listHTML(a){ return a && a.length ? `<ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>` : ""; }
+
+function renderFeedback(turn, canFollow){
+  const ev = turn.ev, seed = cur.seed;
+  const lastMain = session.i >= session.plan.length - 1;
+  $("#feedback").innerHTML = `
+    <div class="row" style="justify-content:space-between">
+      <div class="row" style="gap:10px">${ev.score ? scoreBar(ev.score) : '<span class="pill">Self-check</span>'}<b>${esc(ev.verdict)}</b></div>
+      <span class="muted" style="font-family:var(--f-mono);font-size:13px">${Math.floor(turn.secs/60)}:${String(turn.secs%60).padStart(2,"0")}</span>
+    </div>
+    ${ev.factCheck.length ? `<div class="fact"><h4>Fact check</h4>${listHTML(ev.factCheck)}</div>` : ""}
+    ${ev.strengths.length ? `<div><h4>What worked</h4>${listHTML(ev.strengths)}</div>` : ""}
+    ${ev.improve.length ? `<div><h4>To make it stronger</h4>${listHTML(ev.improve)}</div>` : ""}
+    ${ev.betterLine ? `<div><h4>Try saying</h4><p class="say">${esc(ev.betterLine)}</p></div>` : ""}
+    <details ${ev.offline ? "open" : ""}><summary>What a strong answer covers</summary><div style="margin-top:8px">${listHTML(turn.depth === 1 ? seed.pts : [seed.hint])}</div></details>
+    ${ev.offline ? `<div class="row" id="selfRate"><span class="muted">How did that feel?</span>${[1,2,3,4,5].map(n=>`<button class="chip" data-n="${n}">${n}</button>`).join("")}</div>` : ""}
+    <div class="row">
+      ${canFollow ? `<button class="btn primary" id="fuBtn">Answer the follow-up →</button>` : ""}
+      <button class="btn ${canFollow ? "" : "primary"}" id="nextBtn">${lastMain ? "Finish and see report" : "Next question"}</button>
+      <button class="btn ghost" id="retryBtn">Try this answer again</button>
+    </div>
+    ${canFollow ? `<p class="muted" style="font-size:14px">Follow-up: “${esc(ev.followUp)}”</p>` : ""}`;
+  $("#feedback").hidden = false;
+  $("#feedback").scrollIntoView({behavior:"smooth", block:"start"});
+  document.querySelectorAll("#selfRate .chip").forEach(b => b.onclick = () => { turn.ev.score = +b.dataset.n; document.querySelectorAll("#selfRate .chip").forEach(c=>c.setAttribute("aria-pressed", c===b)); });
+  if(canFollow) $("#fuBtn").onclick = () => { cur.depth++; cur.q = ev.followUp; renderQuestion(ev.ack); };
+  $("#nextBtn").onclick = () => { session.i++; askMain(); };
+  $("#retryBtn").onclick = () => {
+    session.items.pop(); cur.thread.pop();
+    const prev = turn.answer === "(skipped)" ? "" : turn.answer;
+    renderQuestion(); $("#answer").value = prev; updateWords();
+  };
+}
+
+$("#endBtn").onclick = () => { if(listening && dict) dict.stop().catch(()=>{}); finish(); };
+
+/* ============ report ============ */
+async function finish(){
+  clearInterval(tInt); if(tts){ try{ tts.stop(); }catch(e){} }
+  session.done = true;
+  const items = session.items;
+  const scored = items.filter(t => t.ev && t.ev.score);
+  const avg = scored.length ? scored.reduce((s,t)=>s+t.ev.score,0)/scored.length : null;
+  const rep = $("#view-report");
+  show("report");
+  rep.innerHTML = `
+    <div class="hero"><p class="eyebrow">${esc(session.label)} · ${session.mode === "real" ? "Real interview mode" : "Coaching mode"}</p>
+    <h1>Your report</h1></div>
+    <div class="card row" style="gap:28px;align-items:flex-start">
+      <div><div class="big">${avg ? avg.toFixed(1) : "–"}</div><div class="muted" style="font-size:14px">average out of 5</div></div>
+      <div class="stack" style="flex:1;min-width:220px;gap:6px"><div class="muted">${items.length} answers · ${items.filter(t=>t.depth>1).length} follow-ups</div><div id="summaryBox"><div class="thinking"><span class="dots"><i></i><i></i><i></i></span>Writing your summary…</div></div></div>
+    </div>
+    <div class="stack" id="itemList">${items.map((t,k) => `
+      <details class="qa"><summary>${t.ev && t.ev.score ? scoreBar(t.ev.score) : ""} ${t.depth>1 ? '<span class="pill">follow-up</span> ' : ""}${esc(t.q)}</summary>
+        <div class="ans">
+          <p><span class="eyebrow">Your answer</span><br>${esc(t.answer)}</p>
+          ${t.ev && t.ev.verdict ? `<p><b>${esc(t.ev.verdict)}</b></p>` : ""}
+          ${t.ev && t.ev.factCheck && t.ev.factCheck.length ? `<div class="fact"><b>Fact check</b>${listHTML(t.ev.factCheck)}</div>` : ""}
+          ${t.ev && t.ev.strengths && t.ev.strengths.length ? `<div><b>What worked</b>${listHTML(t.ev.strengths)}</div>` : ""}
+          ${t.ev && t.ev.improve && t.ev.improve.length ? `<div><b>To make it stronger</b>${listHTML(t.ev.improve)}</div>` : ""}
+          ${t.ev && t.ev.betterLine ? `<p class="say">${esc(t.ev.betterLine)}</p>` : ""}
+        </div></details>`).join("") || '<p class="muted">No answers recorded this time.</p>'}</div>
+    <div class="row"><button class="btn primary" id="againBtn">Practise again</button><button class="btn" id="toNotes">Open prep notes</button></div>`;
+  $("#againBtn").onclick = () => { session = null; show("home"); };
+  $("#toNotes").onclick = () => { renderNotes(); show("notes"); };
+
+  let summary = null;
+  if(sample && aiOK && items.length){
+    const digest = items.map(t => `[${ROUNDS[t.round].label}${t.depth>1?" follow-up":""}] Q: ${t.q}\nA: ${t.answer.slice(0,1200)}\nScore: ${t.ev?.score ?? "n/a"}; notes: ${(t.ev?.improve||[]).join(" / ")}`).join("\n\n");
+    const prompt = `You coached Najiya Nazeer ("Jiya") through a mock RCI MClinPsy admission interview at Vinayaka Mission's. Her real interview is tomorrow morning and she is very nervous. Using her file and the transcript, write a short, warm, honest debrief.
+
+CANDIDATE FILE:
+${PROFILE}
+
+TRANSCRIPT:
+${digest}
+
+Reply with ONLY JSON: {"headline":"one encouraging but honest sentence","strengths":["3 specific strengths she showed"],"fixes":[{"issue":"short","how":"exactly what to do tonight, one sentence"}] (exactly 3),"revise":["up to 4 specific facts or concepts to revise tonight"],"mantra":"one calming sentence for her to remember walking in"}`;
+    try{ summary = await sample.json(prompt, { modelTier:"default", cache:false }); }catch(e){ summary = null; }
+  }
+  const box = $("#summaryBox");
+  if(summary && typeof summary === "object"){
+    box.innerHTML = `<div class="stack" style="gap:12px">
+      <h3>${esc(summary.headline)}</h3>
+      ${summary.strengths ? `<div><span class="eyebrow">You did well at</span>${listHTML(summary.strengths)}</div>` : ""}
+      ${summary.fixes ? `<div><span class="eyebrow">Three fixes for tonight</span><ul>${summary.fixes.map(f=>`<li><b>${esc(f.issue)}.</b> ${esc(f.how)}</li>`).join("")}</ul></div>` : ""}
+      ${summary.revise && summary.revise.length ? `<div><span class="eyebrow">Revise</span>${listHTML(summary.revise)}</div>` : ""}
+      ${summary.mantra ? `<p class="say">${esc(summary.mantra)}</p>` : ""}</div>`;
+  } else {
+    const weak = items.filter(t => t.ev && t.ev.score && t.ev.score <= 3).map(t => t.q);
+    box.innerHTML = `<p>${weak.length ? "Revisit these questions in the prep notes:" : "Steady work. Read the prep notes once more, then rest."}</p>${listHTML(weak.slice(0,4))}<p class="say" style="margin-top:10px">Slow, clear and honest beats fast and perfect.</p>`;
+  }
+  const hist = store.get("jiya_hist", []);
+  hist.unshift({ id: session.id, when: new Date().toISOString(), label: session.label, mode: session.mode, avg, n: items.length, headline: summary?.headline || "" });
+  store.set("jiya_hist", hist.slice(0,30));
+}
+
+/* ============ history ============ */
+function renderHistory(){
+  const h = store.get("jiya_hist", []);
+  $("#view-history").innerHTML = `<div class="hero"><p class="eyebrow">On this device</p><h1>Practice history</h1></div>
+   <div class="card">${h.length ? h.map(x => `<div class="hist-row"><div><b>${esc(x.label)}</b> <span class="pill">${x.mode === "real" ? "Real" : "Coach"}</span><div class="muted" style="font-size:14px">${new Date(x.when).toLocaleString([], {weekday:"short", hour:"2-digit", minute:"2-digit"})} · ${x.n} answers${x.headline ? " · " + esc(x.headline) : ""}</div></div><div class="big" style="font-size:28px">${x.avg ? x.avg.toFixed(1) : "–"}</div></div>`).join("")
+   : `<p class="muted">Your sessions will appear here with their scores. Start with a full mock interview in coaching mode, then try one in real mode.</p>`}</div>`;
+}
+
+/* ============ prep notes ============ */
+function renderNotes(){
+  const el = $("#view-notes");
+  if(el.dataset.done) return; el.dataset.done = "1";
+  const qa = (q, a) => `<details class="qa"><summary>${q}</summary><div class="ans">${a}</div></details>`;
+  el.innerHTML = `
+  <div class="hero"><p class="eyebrow">Read tonight, skim in the morning</p><h1>Prep notes</h1>
+  <p class="muted">Built from your own documents. Numbers are exactly as they appear in your thesis.</p></div>
+  <nav class="notes-nav">${[["n-intro","Your intro"],["n-diss","Dissertation numbers"],["n-tough","Tough research questions"],["n-intern","Internship"],["n-cases","Your 5 cases"],["n-clin","Clinical revision"],["n-nerves","Nerves toolkit"],["n-check","Tomorrow"]].map(([id,l])=>`<a class="chip" href="#${id}" style="text-decoration:none;color:inherit">${l}</a>`).join("")}</nav>
+
+  <div class="card note" id="n-intro"><h2>Your 90-second introduction</h2>
+   <p class="muted">Adapt the words so they sound like you. Do not memorise it word for word. Memorise the four beats.</p>
+   <p class="intro">“Good morning. I'm Najiya Nazeer. I've just completed my M.Sc. in Clinical Psychology at SRM Medical College Hospital and Research Centre, Kattankulathur.<br><br>
+   As part of the course I did a one-month clinical internship at Shadithya Hospital, rotating through the de-addiction ward, the male and female wards and the dementia ward. I did mental status examinations, MMSE, screening with the PHQ-9 and GAD-7, goal-setting and relapse-prevention sessions, and I ran group sessions.<br><br>
+   My dissertation looked at body dysmorphic symptoms, perceived social support and suicidal ideation in 251 young adults. I found that body-image distress was linked to higher suicidal ideation and social support was protective, independently of gender.<br><br>
+   The internship showed me the difference between observing clinical work and being trained to assess and treat independently. That's why I want the RCI MClinPsy: to become a licensed clinical psychologist.”</p>
+   <p class="muted">Add one personal line about why this field matters to you. Panels remember that line.</p>
+  </div>
+
+  <div class="card note" id="n-diss"><h2>Dissertation at a glance</h2>
+   <p><b>Title.</b> Correlational study of body dysmorphic symptoms, perceived social support and suicidal ideation in male and female populations. Guide: Mrs. Sonal Sunil Mahadik. April 2026.</p>
+   <div class="tbl-wrap"><table>
+    <tr><th>What</th><th>Value</th><th>Say it as</th></tr>
+    <tr><td>Design</td><td class="num">Cross-sectional</td><td>Correlational, convenience sampling, online and paper</td></tr>
+    <tr><td>Sample</td><td class="num">N = 251</td><td>126 female, 125 male, aged 18–26</td></tr>
+    <tr><td>Sample size basis</td><td class="num">125 / group</td><td>Two-group means: SD 4.17 and 4.28, difference 1.5, α .05, power 80%</td></tr>
+    <tr><td>BS-BDD</td><td class="num">9 items, 0–8, total 0–72</td><td>Checking, distress, avoidance, preoccupation, interference…</td></tr>
+    <tr><td>MSPSS</td><td class="num">12 items, 7-pt, 12–84</td><td>Zimet et al. (1988); family, friends, significant other</td></tr>
+    <tr><td>BSS</td><td class="num">19 items, 0–2</td><td>Beck, Kovacs &amp; Weissman (1979); any score ≥ 1 indicates ideation</td></tr>
+    <tr><td>BS-BDD reliability</td><td class="num">α = 0.809</td><td>Good; no item deletion improves it (0.777–0.807)</td></tr>
+    <tr><td>CFA fit</td><td class="num">CFI .871 · TLI .828 · RMSEA .102</td><td>“Marginal to acceptable”; all 9 loadings p &lt; .001</td></tr>
+    <tr><td>Normality</td><td class="num">Shapiro-Wilk p &lt; .05</td><td>So non-parametric tests throughout (jamovi 2.6)</td></tr>
+    <tr><td>BDD ↔ SI</td><td class="num">ρ = 0.448</td><td>Moderate positive (strongest), H1 supported</td></tr>
+    <tr><td>PSS ↔ SI</td><td class="num">ρ = −0.375</td><td>Moderate negative, H2 supported</td></tr>
+    <tr><td>PSS ↔ BDD</td><td class="num">ρ = −0.311</td><td>Moderate negative, H3 supported</td></tr>
+    <tr><td>Gender, PSS</td><td class="num">U = 6455, p = .01, r = −.18</td><td>Females higher support (small effect)</td></tr>
+    <tr><td>Gender, BDD / SI</td><td class="num">p = .53 / p = .24</td><td>No differences</td></tr>
+    <tr><td>Ordinal regression, BDD</td><td class="num">β = 0.058, OR ≈ 1.06</td><td>About +6% odds of higher SI per point; ≈ 1.8× per 10 points</td></tr>
+    <tr><td>Ordinal regression, PSS</td><td class="num">β = −0.036, OR ≈ 0.965</td><td>About −3.5% odds per point; ≈ 30% lower per 10 points</td></tr>
+    <tr><td>Gender in model</td><td class="num">p = .967</td><td>Not an independent predictor</td></tr>
+    <tr><td>Model fit</td><td class="num">McFadden R² = .05</td><td>Modest, as expected: suicidal ideation is multi-factorial</td></tr>
+   </table></div>
+   <p><b>Theories.</b> Veale's cognitive-behavioural model of BDD · Cohen &amp; Wills' (1985) stress-buffering hypothesis · Joiner's (2005) interpersonal theory of suicide: thwarted belongingness and perceived burdensomeness.</p>
+   <p><b>Your story in one line.</b> Body shame leads to withdrawal, which lowers perceived support, which raises both symptoms and suicide risk. Screen college students with body-image concerns for suicide risk, and build connection through CBT, IPT and peer support. Reach out to young men especially.</p>
+   <p class="fact"><b>Check tonight:</b> your thesis says you computed KMO and Bartlett's test but does not print the values. Open your jamovi output and memorise them. A panel may ask.</p>
+  </div>
+
+  <div class="card note stack" id="n-tough"><h2>Tough research questions</h2>
+   <p class="muted">The rule for every one of these: don't defend a weakness. Name it calmly, say what you did establish, then say what you'd do next. Panels reward that.</p>
+   ${qa("“Is reliability plus a CFA really ‘cultural validation’?”","<p>“You're right that it's a preliminary psychometric evaluation rather than full cultural adaptation. What I established is good internal consistency, α = .809, and a single-factor structure in Indian young adults. Full validation would need translation and back-translation, expert review, test-retest reliability, and convergent validity against an established BDD measure. That's the next step.”</p>")}
+   ${qa("“RMSEA .102 and CFI .871 are below cut-offs.”","<p>Usual cut-offs: RMSEA ≤ .08 (≤ .06 good) and CFI/TLI ≥ .90 (≥ .95 good). “The fit is marginal, and I said so in the thesis. All nine loadings were strong and significant, and RMSEA is known to be inflated when degrees of freedom are low (df = 27). Next I'd inspect modification indices for correlated residuals and test a two-factor model in a larger sample.”</p><p>RMSEA measures how badly the model fits the population per degree of freedom (lower is better). CFI compares your model with a null model (higher is better).</p>")}
+   ${qa("“Why CFA and not EFA?”","<p>CFA tests a structure you already expect. The BS-BDD is designed as a single severity dimension, so you tested that hypothesis. If the panel pushes: an EFA first, or EFA and CFA on split halves, would have been more rigorous for a new population.</p>")}
+   ${qa("“Why Spearman and ordinal regression?”","<p>All three variables were non-normal in both groups (Shapiro-Wilk). Spearman uses ranks. BSS scores are skewed with many low values, so you treated them as ordered levels of severity. Ordinal logistic regression models the odds of being in a higher category and doesn't need normal residuals. Its key assumption is <b>proportional odds</b>: each predictor's effect is the same across category thresholds. Know whether you checked it, and if not, say it's a limitation.</p>")}
+   ${qa("“McFadden R² is only .05.”","<p>Pseudo-R² values in logistic models run much lower than OLS R² and aren't directly comparable. McFadden values of .2–.4 already indicate excellent fit. The aim was to test whether these two factors predict ideation independently, and both did, at p &lt; .001. Suicidal ideation has many causes (depression, hopelessness, trauma, life stress), so two predictors were never going to explain most of it.</p>")}
+   ${qa("“Did you test gender as a moderator?”","<p>Be accurate: you compared levels by gender (Mann-Whitney) and entered gender as a predictor (not significant). Moderation would need an interaction term (BDD × gender) or comparing the correlations across groups with Fisher's r-to-z. Say that's a natural next analysis.</p>")}
+   ${qa("“Mediator vs moderator, with your variables.”","<p><b>Mediator</b> explains <i>how</i>: BDD symptoms → lower perceived support → higher suicidal ideation (support carries the effect). <b>Moderator</b> changes <i>how strong</i>: the BDD → SI link is weaker for people with high support (that's the buffering hypothesis), or it differs by gender.</p>")}
+   ${qa("“What did you do about participants with high suicidal ideation?”","<p>Say exactly what was done: SRM review board approval, written consent, anonymity, the right to skip, debriefing, and support resources given at the end. If there was no individual referral protocol (anonymous data makes it hard), say so honestly, then describe what you'd add: flag critical items, an optional contact field, a helpline on every page, and a named supervisor to escalate to. Show you understand the tension between anonymity and duty of care.</p>")}
+   ${qa("“Why exclude people under psychiatric treatment?”","<p>To study a non-clinical population and avoid medication or therapy confounding the scores. The cost is a restricted range: the highest-risk people may be missing, so the true associations could be even stronger.</p>")}
+   ${qa("“Explain your sample size calculation.”","<p>A two-independent-means formula: n per group = 2(Z<sub>α/2</sub> + Z<sub>β</sub>)² σ² / d² = 2 × (1.96 + 0.84)² × ≈17.9 / 1.5² ≈ 125. So 125 per group, 250 in total, and you got 251.</p>")}
+   ${qa("“Correlation isn't causation. Could suicidal ideation cause body-image concerns?”","<p>Yes, it's possible. A cross-sectional design can't separate direction. Depression could drive both. A longitudinal panel design (cross-lagged) would test direction. Your implication stands either way: screen people with body-image concerns.</p>")}
+  </div>
+
+  <div class="card note" id="n-intern"><h2>Internship: what to say</h2>
+   <p><b>Shadithya Hospital · 30 days · supervisor Mrs. Minu Bharathi.</b> M3 de-addiction (case managers Mr. Nishanth, Mr. Balachander) → M1 deluxe ward (Ms. Ishwarya) → M2 male ward (Ms. Vinodhini) → K2 dementia and K3 female ward (Ms. Fouziya).</p>
+   <div class="tbl-wrap"><table>
+    <tr><th>Did it myself</th><th>Observed</th></tr>
+    <tr><td>MSE (Mr. R.J., Mr. R.X., Mr. S.B.) · MMSE (Mr. M.D.) · PHQ-9 + GAD-7 (Ms. W.N.) · TMT-B, clock drawing, DSST, Digit Vigilance, Stroop · reminiscence therapy · pre-discharge goal-setting (six domains) · relapse prevention · group sessions of up to about 15 patients · schizophrenia case presentation with adherence role-play</td>
+        <td>Rorschach administration (Ms. G.J., Ms. N.T.) · psychiatric reviews and collateral history (Dr. Kishore Anand) · ECT, rTMS · art therapy · psychoeducation by case managers</td></tr>
+   </table></div>
+   <p><b>Three stories to have ready</b></p>
+   <ul>
+    <li><b>Hidden risk.</b> Ms. W.N., 16F, looked quiet. Collateral from her family revealed suicidal threats. You gave the PHQ-9 and GAD-7, which showed active ideation, and escalated. Lesson: screen actively, use collateral, and don't trust a calm surface.</li>
+    <li><b>Biology isn't everything.</b> Ms. J.S., 20F, was on ECT without improvement, and parental NEET pressure was the key stressor. Lesson: unaddressed family stress blocks recovery, so family work is needed.</li>
+    <li><b>Staying grounded.</b> Ms. U.P. had persecutory delusions and kept asking whether she was safe. You reassured her calmly without agreeing with or arguing against the delusion. Ms. S.R., 15F, was agitated: you kept calm and kept clear boundaries, and later saw her recover and get discharged.</li>
+   </ul>
+   <p><b>Be precise.</b> Jenga, Stroop and Digit Vigilance in groups were <i>therapeutic or cognitive-stimulation activities</i>, not standardised assessments. Saying so shows maturity.</p>
+   <p><b>Goal-setting domains:</b> physical, personal, professional, religious, social, relationship.</p>
+  </div>
+
+  <div class="card note stack" id="n-cases"><h2>Your five case reports</h2>
+   ${[
+    ["Case I · Mr. L.N., 34M","Provisional schizophrenia","A 3-year psychotic illness with a 40-day relapse (non-adherence). Grandiose-religious delusion (“Surya Bhagawan”), <b>passivity phenomena</b>, persecutory, referential and somatic delusions, a commanding voice, tactile hallucinations, aggression. ECT planned.",
+     "Why not mania with psychotic features or schizoaffective? Answer from the course (3 years, incomplete remission), the first-rank symptom (passivity), and mood symptoms that aren't sustained and dominant. Note: command hallucinations are <i>not</i> a first-rank symptom.",
+     "PANSS / BPRS, Rorschach, and a cognitive screen after stabilisation"],
+    ["Case II · Mr. S.A., 24M","BPAD, current episode mania without psychotic symptoms","ADHD and dyslexia history. A similar episode 2 years ago after a breakup. Irritability, talkativeness, grandiosity, less sleep, impulsive spending, increased cannabis use. Overvalued ideas, no delusions.",
+     "Substance-induced vs primary: check the timeline and whether symptoms persist when abstinent in hospital, plus urine toxicology. ADHD is a trait from childhood; mania is an episodic change. ICD-10 BPAD needs 2 or more episodes, at least one manic.",
+     "YMRS (Young Mania Rating Scale), substance-use assessment (e.g. CUDIT)"],
+    ["Case III · Ms. J.S., 20F","Recurrent depressive disorder, current episode severe without psychotic symptoms","NEET aspirant with hypothyroidism. 2–3 years of low mood, emptiness, withdrawal, scratching self-harm, suicidal ideation. Critical parents, poor adherence.",
+     "“Recurrent” needs at least 2 episodes separated by remission. With a continuous course, discuss dysthymia with a superimposed episode (“double depression”). Hypothyroidism can mimic or worsen depression, so check TFTs.",
+     "BDI-II / HAM-D, Beck Scale for Suicidal Ideation (your own tool), Beck Hopelessness Scale"],
+    ["Case IV · Mr. M.G., 49M","Organic psychotic disorder secondary to cerebrovascular disease","Ischemic stroke 3 years ago, hypertension, epilepsy, dysphasia. Paranoia, persecutory, jealousy, somatic and supernatural delusions, voices, violence toward his wife, insomnia after stopping medication.",
+     "The temporal link with the stroke supports an organic cause. Differential: epilepsy-related (interictal) psychosis. The psychologist adds neuropsychological assessment adapted for dysphasia, and caregiver support.",
+     "MMSE / ACE-III / MoCA, then a neuropsych battery (NIMHANS battery, PGI-BBD)"],
+    ["Case V · Mrs. A.N., 38F","Provisional schizophrenia","8 years: violence (knife on admission), paranoid accusations, fluctuating course with normal periods, early impulsive acts (substance ingestion, running away). Father alcoholic. The two families conflict over her treatment. Previously had rTMS.",
+     "Differentials: BPAD (7–10 day deteriorations, episodic course), emotionally unstable personality disorder (impulsivity, self-harm), delusional disorder. Treatment: family therapy and adherence work across both families.",
+     "MMPI-2 / MCMI, IPDE, Rorschach, a mood rating scale"]
+   ].map(([h,dx,sx,probe,tests]) => `<div class="qa case"><span class="tag">${h}</span><b>${dx}</b><p>${sx}</p><p><b>Likely probe.</b> ${probe}</p><p class="muted"><b>Tests you'd add:</b> ${tests}</p></div>`).join("")}
+   <p class="muted">Your reports have no psychological testing section. Expect “Which tests would you have used?”. The lines above are your answer.</p>
+  </div>
+
+  <div class="card note" id="n-clin"><h2>Clinical quick revision</h2>
+   <p><b>MSE order.</b> Appearance and behaviour → psychomotor → speech (rate, volume, tone, amount) → mood (subjective, in her words) and affect (observed: range, reactivity, congruence) → thought: form, stream, content, possession → perception → cognition (consciousness, orientation, attention, memory, abstraction) → insight (grades 1–6) → judgement (personal, social, test).</p>
+   <p><b>Schneider's first-rank symptoms.</b> Audible thoughts (thought echo); voices arguing or discussing in the third person; voices giving a running commentary; thought insertion, withdrawal and broadcasting; made feelings, impulses and actions (passivity); somatic passivity; delusional perception.</p>
+   <p><b>Delusion vs overvalued idea.</b> A delusion is a fixed false belief held with conviction, out of keeping with the person's culture, and not amenable to reason. An overvalued idea is an understandable, culturally plausible belief that is held with excessive emotional investment and dominates life (Mr. S.A. had these).</p>
+   <p><b>Indian and standard tests.</b> Intelligence: WAIS-IV India, WAPIS, Bhatia's Battery, MISIC (children), VSMS (adaptive). Neuropsych: NIMHANS battery, PGI Memory Scale, PGI-BBD, ACE-III. Personality: MMPI-2, MCMI, 16PF, EPQ. Projective: Rorschach (Exner Comprehensive System / R-PAS), TAT, sentence completion. Symptom scales: PANSS, BPRS, YMRS, HAM-D, BDI-II, HAM-A, Y-BOCS.</p>
+   <p><b>MMSE.</b> 30 points: orientation, registration, attention and calculation, recall, language, visuo-construction. ≤ 23/24 is the usual impairment cut-off; adjust for education.</p>
+   <p><b>Mental Health Act 2017.</b> Right to access care · advance directive · nominated representative · independent vs supported admission · confidentiality and dignity · Section 115: a suicide attempt is presumed to involve severe stress, so the response is care, not prosecution.</p>
+   <p><b>Reliability vs validity.</b> Reliability is consistency (internal: α; test-retest; inter-rater). Validity is whether the test measures what it claims (content, criterion: concurrent and predictive, construct: convergent and discriminant, factorial).</p>
+   <p><b>Clinical psychologist vs psychiatrist vs counsellor.</b> The psychiatrist is a medical doctor who can prescribe. The clinical psychologist is RCI-registered and does psychological assessment, diagnosis and psychotherapy. A counsellor offers supportive, non-licensed help for everyday problems.</p>
+   <p><b>Motivational interviewing.</b> OARS: open questions, affirmations, reflections, summaries. Roll with resistance, develop discrepancy, support self-efficacy. Stages of change: precontemplation → contemplation → preparation → action → maintenance (→ relapse).</p>
+  </div>
+
+  <div class="card note" id="n-nerves"><h2>Nerves toolkit</h2>
+   <ul>
+    <li><b>Buy time without panic.</b> “That's an important question. Let me take a moment.” Then breathe once. Two seconds of silence feels long to you and normal to them.</li>
+    <li><b>When you don't know.</b> “I'm not certain about that. What I do know is… and I'd check it in [source/supervisor].” Honesty about limits is a core clinical value. Panels test for it.</li>
+    <li><b>When challenged on your thesis.</b> Agree with what's fair, state what you did establish, then name the next step. Never argue.</li>
+    <li><b>Answer shape.</b> Direct answer first → one specific example from your own work → what it taught you. Stop there. Let them ask more.</li>
+    <li><b>If your mind goes blank.</b> Ask them to repeat the question. It's completely acceptable.</li>
+    <li><b>Body.</b> Feet flat, hands loosely together, slow exhale before you start speaking. Look at whoever asked, then include the others.</li>
+   </ul>
+  </div>
+
+  <div class="card note" id="n-check"><h2>Tonight and tomorrow morning</h2>
+   <ul>
+    <li>Tonight: one full mock in coaching mode, then read “Tough research questions” once. Then stop and sleep. Sleep helps your recall more than late cramming.</li>
+    <li>Memorise five numbers: <b>251 · .809 · .448 · −.375 · −.311</b>.</li>
+    <li>Find your KMO and Bartlett values in your jamovi output.</li>
+    <li>Carry: printed dissertation, internship report, mark sheets and certificates (originals and copies), ID, the entrance hall ticket or any letter from VMRF, a pen, water.</li>
+    <li>Morning: eat something, arrive early, do box breathing once before you go in.</li>
+   </ul>
+  </div>`;
+}
+</script>
+
+</body>
+</html>
